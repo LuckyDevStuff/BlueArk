@@ -1,0 +1,5 @@
+name: Blueark
+version: ${project.version}
+main: de.luckydev.blueark.Main
+authors: [LuckyDev]
+description: BlueArk the Anticheat!
