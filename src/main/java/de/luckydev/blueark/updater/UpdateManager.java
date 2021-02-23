@@ -1,7 +1,6 @@
 package de.luckydev.blueark.updater;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import de.luckydev.blueark.util.FileUtil;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -10,35 +9,17 @@ import java.net.URL;
 
 public class UpdateManager {
 
-    public static String githubAPI = "https://api.github.com/repos/LuckyDevStuff/BlueArk";
-    public static String githubRelease = "https://github.com/LuckyDevStuff/BlueArk";
-    public static double version = 1.0;
+    public static String api = "https://luckydev.de/api/BlueArk";
+    public static String download = "https://github.com/LuckyDevStuff/BlueArk";
+    public static double version = 1.2;
 
     public static String checkForUpdates() {
-        try {
-            JSONArray releases = new JSONArray(getFromURL(githubAPI + "/releases"));
-            double id = Double.parseDouble( ((JSONObject)releases.get(0)).get("name").toString().substring(1) );
-            return id > version?"v"+id:null;
-        } catch (Exception ignored) {
-        }
-        return null;
+        double id = Double.parseDouble(getFromURL(api + "/version.php?scope=last"));
+        return id > version?"v"+id:null;
     }
 
-    public static void downloadRelease(String release, String file, File out) {
-        try {
-            try (BufferedInputStream inputStream = new BufferedInputStream(new URL(githubRelease + "/releases/download/" + release + "/" + file).openStream());
-                 FileOutputStream fileOS = new FileOutputStream(out)) {
-                byte data[] = new byte[1024];
-                int byteContent;
-                while ((byteContent = inputStream.read(data, 0, 1024)) != -1) {
-                    fileOS.write(data, 0, byteContent);
-                }
-            } catch (IOException e) {
-                // handles IO exceptions
-            }
-            getBuffFromURL(githubRelease + "/releases/download/" + release + "/" + file);
-        } catch (Exception ignored) {
-        }
+    public static void downloadFromRelease(String release, String resource, File out) {
+        FileUtil.downloadToFile(download + "/releases/download/" + release + "/" + resource, out);
     }
 
     public static BufferedReader getBuffFromURL(String url) {
@@ -65,4 +46,5 @@ public class UpdateManager {
             return null;
         }
     }
+
 }
